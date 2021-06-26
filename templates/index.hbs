@@ -1,0 +1,184 @@
+<html>
+
+<head>
+    <title>MyChat</title>
+      <!-- Bootstrap CSS (Cloudflare CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous">
+    <!-- jQuery (Cloudflare CDN) -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <!-- Bootstrap Bundle JS (Cloudflare CDN) -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js" integrity="sha512-wV7Yj1alIZDqZFCUQJy85VN+qvEIly93fIQAN7iqDFCPEucLCeNFz4r35FCo9s6WrpdDQPi80xbljXB8Bjtvcg==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/style.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="/main.js" type="text/javascript"></script>
+</head>
+
+<body>
+    <nav style="position: absolute; top: 25%;">
+        <ul class="nav nav-tabs flex-column" role="tablist">
+            <li class="nav-item">
+                <a href="#message" class="nav-link" aria-controls="message" data-toggle="tab" role="tab">Message</a>
+            </li>
+            <li class="nav-item">
+                <a href="#allUsers" class="nav-link" aria-controls="allUsers" data-toggle="tab" role="tab">Users</a>
+            </li>
+        </ul>
+    </nav>
+    
+    <main>
+        <section class="tab-content">
+            <div class="tab-pane show active" id="message" role="tabpanel">
+
+                <input type="button" id="back" class="btn disBlock"
+                    style="position: absolute; top: 1%; font-size: 24pt; padding: 0; margin: 0;" value="🡰"></input>
+
+                <div class="mainWindow">
+                    <div><h4 id="curName" style="text-align: center;"></h4></div>
+
+                    <div class="allMes" style="overflow-y: scroll;"></div>
+
+                    <div id="blockSending" class="disBlock">
+                        <div class="blockSending">
+                            <div class="form-group sendingInput">
+                                <input type="textbox" id="mesInput" name="message" style="font-size: 14pt;"
+                                    class="form-control" placeholder="Сообщение">
+                            </div>
+                            <div class="form-group sendingInput">
+                                <input type="submit" id="sendMes" name="send" style="font-size: 14pt; font-weight: 900;"
+                                    class="form-control btn" value="➤">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="allUsers" role="tabpanel">
+                <div class="mainWindow">
+                    {{#each names}}
+                        <div class="card border-primary myCardName" onclick='goToMessage("{{this.username}}")'>
+                            <div class="nameBox">
+                                <img class="card-img-top avatar"
+                                    src="/data/avatar.png">
+                                <div>
+                                    <h4 style="padding: 25% 0%; margin: 0;">{{this.username}}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+
+    <script>
+
+        let currentUser = '';
+        let myName = '{{name}}';
+        let currentMessage = [];
+        let currentMessageSize = 0;
+
+        let handler; // обработчик новых сообщений
+
+        $('#sendLogin').on('click', () => {
+            $.ajax({
+                type: 'POST',
+                url: '/changeName',
+                data: {
+                    name: $('#login').val()
+                },
+                success: (data) => {
+                    window.location.reload();
+                },
+                error: (err) => {
+                    console.log(err);
+                }
+            });
+            return false;
+        });
+
+        $('#sendMes').on('click', () => {
+            let who = "Гриша";
+            let message = $('#mesInput').val();
+            if (message != "") {
+                $('#mes').val("");
+                $.ajax({
+                    type: 'POST',
+                    url: '/api/sendMessage',
+                    data: {
+                        from: who,
+                        message: message,
+                        to: currentUser
+                    },
+                    success: (data) => {
+                        if (data != [])
+                            addMessage(myName, data.message);
+                    },
+                    error: (err) => {
+                        console.log(err);
+                    }
+                });
+            }
+            return false;
+        });
+
+        $('#back').on('click', () => {
+            $('#curName').empty()
+
+            $('.allMes').empty();
+            $('#blockSending').addClass('disBlock');
+            $('#back').addClass('disBlock');
+            $('#name').removeClass('disBlock');
+            $('#message').removeClass('show active');
+            $('#allUsers').addClass('active');
+
+            $('[href="#message"]').removeClass('active');
+            $('[href="#allUsers"]').addClass('active');
+            clearInterval(handler);
+        });
+
+        function goToMessage(name) {
+            currentUser = name;
+            //alert(currentUser + myName)
+            $.ajax({
+                type: 'POST',
+                url: '/api/showMessage',
+                data: {
+                    from: myName,
+                    to: currentUser
+                },
+                success: (data) => {
+                    $('#curName').text(currentUser);
+
+                    $('#blockSending').removeClass('disBlock');
+                    $('#back').removeClass('disBlock');
+                    $('#name').addClass('disBlock');
+                    $('#message').addClass('show active');
+                    $('#allUsers').removeClass('active');
+
+                    $('[href="#message"]').addClass('active');
+                    $('[href="#allUsers"]').removeClass('active');
+
+                    const messages = data.data
+                    console.log(messages)
+                    for (let i = 0; i < messages.length; i++) {
+                        addMessage(messages[i].fromWho, messages[i].content)
+                    }
+                    $('.allMes').scrollTop($('.allMes')[0].scrollHeight);
+                    handler = setInterval(readNewMessages, 1000);
+                },
+                error: () => { }
+            });
+        }
+
+        /*$.ajax({
+            type: 'GET',
+            url: 'http://localhost:80/getAllUser',
+            success: (data) => {console.log(data)},
+            error: null
+        })*/
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,102 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js" integrity="sha512-wV7Yj1alIZDqZFCUQJy85VN+qvEIly93fIQAN7iqDFCPEucLCeNFz4r35FCo9s6WrpdDQPi80xbljXB8Bjtvcg==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/style.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <section>
+        <form id="regForm">
+            <div class="form-group">
+                <label for="login">Login</label>
+                <input type="text" name="login" class="form-control" id="login" placeholder="Login">
+            </div>
+            <div class="form-group">
+                <label for="Password1">Password</label>
+                <input type="password" name="psw1" class="form-control" id="Password1" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <label for="Password2">Password</label>
+                <input type="password" name="psw2" class="form-control" id="Password2" placeholder="Repeat password">
+            </div>
+            <div class="form-group">
+                <label for="Nickname">Nickname</label>
+                <input type="text" name="nick" class="form-control" id="Nickname" placeholder="Ник">
+            </div>
+            <button id="signUp" type="button" class="btn btn-primary" style="margin: 8px;">Войти</button>
+            <div><small id="goToSignIn">У меня есть аккаунт</small></div>
+        </form>
+
+        <form id="loginForm" class="disBlock">
+            <div class="form-group">
+                <label for="login2">Login</label>
+                <input type="text" name="login" class="form-control" id="login2" placeholder="Login">
+            </div>
+            <div class="form-group">
+                <label for="Password">Password</label>
+                <input type="password" name="psw1" class="form-control" id="Password" placeholder="Password">
+            </div>
+            <button id="signIn" type="button" class="btn btn-primary" style="margin: 8px;">Войти</button>
+            <div><small id="goToSignUp">Зарегестрироваться</small></div>
+        </form>
+    </section>
+
+    <script>
+
+        $('#signUp').on('click', () => {
+            $.ajax({
+                type: 'POST',
+                url: '/api/register',
+                data: {
+                    login: $('#login').val(),
+                    psw1: $('#Password1').val(),
+                    psw2: $('#Password2').val(),
+                    nick: $('#Nickname').val()
+                },
+                success: (data) => {
+                    document.location.href = '/profile/' + data.id
+                },
+                error: (err) => { 
+                    console.error(err)
+                }
+            })
+        })
+
+        $('#signIn').on('click', () => {
+            $.ajax({
+                type: 'POST',
+                url: '/api/login',
+                data: {
+                    login: $('#login2').val(),
+                    psw1: $('#Password').val()
+                },
+                success: (data) => {
+                    document.location.href = '/profile/' + data.id
+                },
+                error: (err) => { 
+                    console.error(err)
+                }
+            })
+        })
+
+        $('#goToSignIn').on('click', () => {
+            $('#regForm').addClass('disBlock');
+            $('#loginForm').removeClass('disBlock');
+        });
+
+        $('#goToSignUp').on('click', () => {
+            $('#regForm').removeClass('disBlock');
+            $('#loginForm').addClass('disBlock');
+        });
+    </script>
+</body>
+
+</html>
