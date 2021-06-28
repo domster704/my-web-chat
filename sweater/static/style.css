@@ -1,0 +1,97 @@
+:root {
+  --marginCard: 16px;
+}
+
+.disBlock {
+  display: none;
+}
+
+html {
+  overflow-y: hidden;
+}
+
+
+body {
+  position: absolute;
+  left: 25%;
+  right: 25%;
+  height: 100%;
+}
+
+.mainWindow {
+  margin: 1% 20%;
+  background-color: #f8f9fa;
+  border: 1px solid #d3d3d3;
+  border-radius: 5px;
+  height: 100%;
+}
+
+.mesCard {
+  clear: both;
+  max-width: 75%;
+  border-radius: 16px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.mesText {
+  padding: 2px;
+  font-size: 14pt;
+}
+
+.myCardName {
+  margin: 0% 30%;
+  margin-top: 16px;
+  border-radius: 32px;
+}
+
+.rightCard {
+  float: right;
+  margin-right: var(--marginCard);
+}
+
+.leftCard {
+  float: left;
+  margin-left: var(--marginCard);
+}
+
+.mainMessage {
+  padding-left: 20%;
+  padding-right: 20%;
+  padding-top: 10%;
+}
+
+.nameBox {
+  display: flex;
+  float: left;
+  padding: 0;
+  text-align: left;
+}
+
+.avatar {
+  width: min-content;
+  height: min-content;
+}
+
+#blockSending {
+  position: absolute;
+  width: 60%;
+  bottom: 0;
+  border: 1px solid gray;
+  max-height: min-content;
+}
+
+.sendingInput {
+  float: left;
+  padding: 4px;
+}
+
+.allMes {
+  max-height: 83%;
+  margin-top: 1%;
+}
+
+.loginBlock {
+  margin: 8px;
+  width: 10%;
+}
